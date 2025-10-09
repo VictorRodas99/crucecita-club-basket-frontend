@@ -1,6 +1,12 @@
+import '@/resources/css/global.css'
+import { PortalHost } from '@rn-primitives/portal'
 import { Stack } from 'expo-router'
-import '../resources/css/global.css'
 
 export default function RootLayout() {
-  return <Stack />
+  return (
+    <>
+      <Stack />
+      <PortalHost />
+    </>
+  )
 }
