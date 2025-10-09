@@ -1,4 +1,5 @@
 import { ToastContainer } from '@/resources/components/toast'
+import { SessionProvider } from '@/resources/context/session.context'
 import { ToastProvider } from '@/resources/context/toast.context'
 import '@/resources/css/global.css'
 import {
@@ -36,11 +37,13 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ToastProvider>
-        <ToastContainer />
-        <Slot />
-        <PortalHost />
-      </ToastProvider>
+      <SessionProvider>
+        <ToastProvider>
+          <ToastContainer />
+          <Slot />
+          <PortalHost />
+        </ToastProvider>
+      </SessionProvider>
     </QueryClientProvider>
   )
 }
