@@ -14,7 +14,9 @@ module.exports = defineConfig([
     rules: {
       'prettier/prettier': [
         'error',
-        {},
+        {
+          endOfLine: 'auto'
+        },
         {
           usePrettierrc: true
         }
