@@ -1,3 +1,4 @@
+import { CircleCheck, CircleX } from 'lucide-react-native'
 import { useCallback, useEffect, useRef } from 'react'
 import { Animated, Text, View } from 'react-native'
 import { useToast } from '../hooks/toast'
@@ -20,13 +21,13 @@ const Toast = ({ type = 'success', message, duration = 350 }: ToastProps) => {
   const variants = {
     success: {
       title: 'Success',
-      icon: 'checkmark-circle',
+      icon: CircleCheck,
       style: 'green',
       bgColor: 'bg-green-100'
     },
     error: {
       title: 'Error',
-      icon: 'close-circle',
+      icon: CircleX,
       style: 'red',
       bgColor: 'bg-red-100'
     }
@@ -63,11 +64,7 @@ const Toast = ({ type = 'success', message, duration = 350 }: ToastProps) => {
       )}
       style={{ bottom }}
     >
-      <Icon
-        size={32}
-        name={selectedVariant.icon}
-        color={selectedVariant.style}
-      />
+      <Icon size={32} as={selectedVariant.icon} color={selectedVariant.style} />
       <View className="ml-3">
         <Text className="font-bold">{selectedVariant.title}</Text>
         <Text className="text-[15px]">{message}</Text>
