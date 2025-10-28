@@ -9,23 +9,21 @@ import {
 import { Button } from '@/resources/components/primitives/button'
 import { Input } from '@/resources/components/primitives/input'
 import { Label } from '@/resources/components/primitives/label'
+import { zodSpanishRulesMessages } from '@/resources/constants/rules'
 import { cn } from '@/resources/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as Device from 'expo-device'
+import { LinearGradient } from 'expo-linear-gradient'
 import { router } from 'expo-router'
 import { Eye, EyeClosed, LucideProps } from 'lucide-react-native'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { Image, Pressable, Text, View, useColorScheme } from 'react-native'
+import { Pressable, Text, View, useColorScheme } from 'react-native'
 import { z } from 'zod'
-
-const mainLogo = require('@/resources/assets/images/main-logo.png')
 
 const loginFormSchema = z.object({
   email: z.string().email({ message: 'Email Inválido' }),
-  password: z
-    .string()
-    .min(6, 'La contraseña debe ser de al menos 6 caracteres'),
+  password: z.string().min(6, zodSpanishRulesMessages.passwordMin),
   device_name: z.string()
 })
 
@@ -71,20 +69,7 @@ export default function Login() {
   }
 
   return (
-    <View className="flex-1 px-5">
-      <View className="items-center py-12 gap-2">
-        <View className="size-12">
-          <Image source={mainLogo} className="flex-1 size-full" />
-        </View>
-        <View className="items-center">
-          <Text className="text-2xl font-bold text-white">
-            Club Crucecita de Basket
-          </Text>
-          <Text className="text-muted-foreground">
-            Gestión Integral de Básquetbol
-          </Text>
-        </View>
-      </View>
+    <>
       <Card className="w-full max-w-sm shadow-lg">
         <CardHeader className="flex-row">
           <View className="flex-1 gap-1.5 items-center">
@@ -166,20 +151,58 @@ export default function Login() {
           </View>
         </CardContent>
         <CardFooter className="flex-col gap-3">
-          <Button className="w-full" onPress={() => handleSubmit(onSubmit)()}>
-            <Text className="text-white font-semibold">Iniciar Sesión</Text>
-          </Button>
+          <Pressable
+            onPress={() => handleSubmit(onSubmit)()}
+            className="w-full opacity-100"
+          >
+            <LinearGradient
+              colors={['#10c8e0', '#0891b2']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={{
+                width: '100%',
+                paddingVertical: 10,
+                borderRadius: 8,
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <Text className="text-white font-semibold">Iniciar Sesión</Text>
+            </LinearGradient>
+          </Pressable>
           <Button
             variant="link"
-            // @ts-ignore
-            onPress={() => router.push('/(auth)/forgot-password')}
+            onPress={() => router.push('/forgot-password')}
           >
-            <Text className="text-muted-foreground">
+            <Text className="text-muted-foreground text-xs">
               ¿Olvidaste tu contraseña?
             </Text>
           </Button>
+
+          <View className="w-full flex-row items-center">
+            <View className="w-[40%] border-t border-muted-foreground"></View>
+            <Text className="w-[20%] text-black dark:text-white text-center text-xs">
+              O
+            </Text>
+            <View className="w-[40%] border-t border-muted-foreground"></View>
+          </View>
+
+          <View>
+            <Button
+              variant="link"
+              // @ts-ignore
+              onPress={() => router.push('/register')}
+            >
+              <Text className="text-muted-foreground text-xs">
+                ¿No tiene una cuenta?{' '}
+                <Text className="font-bold text-primary underline">
+                  Regístrate
+                </Text>
+              </Text>
+            </Button>
+          </View>
         </CardFooter>
       </Card>
-    </View>
+    </>
   )
 }
