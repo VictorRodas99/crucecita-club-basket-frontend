@@ -6,7 +6,9 @@ import * as Device from 'expo-device'
 import { useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
+
 import StepOne from './step-one'
+import StepTwo from './step-two'
 
 /* <Button variant="link" onPress={() => router.push('/login')}>
           <Text>Login</Text>
@@ -33,9 +35,9 @@ export interface StepsProps {
 
 const components = {
   [STEP.one]: (props: StepsProps) => <StepOne {...props} />,
-  [STEP.two]: (props: StepsProps) => <Text>Hola</Text>,
+  [STEP.two]: (props: StepsProps) => <StepTwo {...props} />,
   [STEP.studentsStep]: (props: StepsProps) => <Text>Hola</Text>,
-  [STEP.three]: (props: StepsProps) => <Text>Hola</Text>
+  [STEP.three]: (props: StepsProps) => <Text>Paso tres</Text>
 }
 
 export type FlowStep = (typeof STEP)[keyof typeof STEP]
