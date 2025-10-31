@@ -1,4 +1,5 @@
 import { USER_ROLE } from '@/resources/constants/config'
+import { parseDate } from '@/resources/lib/utils'
 import { Role } from '@/resources/types/user'
 import { z } from 'zod'
 
@@ -15,7 +16,7 @@ const registerFormSchema = z
       { message: 'El rol es requerido' }
     ),
     nombre: z
-      .string()
+      .string({ message: 'El nombre es requerido' })
       .min(2, 'El nombre debe tener al menos 2 caracteres')
       .max(255, 'El nombre no puede superar los 255 caracteres'),
     apellido: z
@@ -36,11 +37,11 @@ const registerFormSchema = z
       .string()
       .min(1, 'La fecha de nacimiento es requerida')
       .refine((date) => {
-        const parsedDate = new Date(date)
+        const parsedDate = parseDate(date)
         const today = new Date()
         today.setHours(0, 0, 0, 0)
-        return parsedDate < today
-      }, 'La fecha de nacimiento debe ser anterior a hoy'),
+        return parsedDate ?? new Date() < today
+      }, 'La fecha de nacimiento debe ser válida y anterior a hoy'),
     descripcion: z
       .string()
       .max(500, 'La descripción no puede superar los 500 caracteres')
@@ -49,17 +50,58 @@ const registerFormSchema = z
     telefono: z
       .string()
       .min(8, 'El teléfono debe tener al menos 8 caracteres')
-      .max(20, 'El teléfono no puede superar los 20 caracteres'),
-    foto_perfil: z
-      .instanceof(File)
-      .refine((file) => file.size > 0, 'La foto de perfil es requerida')
+      .max(20, 'El teléfono no puede superar los 20 caracteres')
+      .regex(
+        /^[0-9+\-\s()]*$/,
+        'El teléfono solo puede contener números, +, -, espacios y paréntesis'
+      )
       .refine(
-        (file) => file.size <= 4 * 1024 * 1024, // 4096 KB = 4MB
+        (val) => {
+          // Eliminar caracteres no numéricos para validar
+          const numeros = val.replace(/[^0-9]/g, '')
+          return numeros.length >= 8
+        },
+        { message: 'El teléfono debe contener al menos 8 dígitos' }
+      )
+      .refine(
+        (val) => {
+          const numeros = val.replace(/[^0-9]/g, '')
+          // Validar formatos comunes de Paraguay
+          // Móviles: 09XX XXX XXX (10 dígitos)
+          // Fijos: 021 XXX XXX (9 dígitos para Asunción)
+          // Con código país: +595 9XX XXX XXX
+          return numeros.length >= 8 && numeros.length <= 15
+        },
+        { message: 'El número de teléfono no tiene un formato válido' }
+      )
+      .refine(
+        (val) => {
+          const numeros = val.replace(/[^0-9]/g, '')
+          // Si tiene código de país +595, validar formato paraguayo
+          if (val.startsWith('+595')) {
+            return numeros.length >= 12 // +595 + 9 dígitos mínimo
+          }
+          return true
+        },
+        { message: 'Formato con código de país incompleto (+595 XXX XXX XXX)' }
+      ),
+    foto_perfil: z
+      .object({
+        uri: z.string(),
+        fileName: z.string().optional(),
+        fileSize: z.number().optional(),
+        mimeType: z.string().optional(),
+        width: z.number().optional(),
+        height: z.number().optional()
+      })
+      .refine((file) => file.uri.length > 0, 'La foto de perfil es requerida')
+      .refine(
+        (file) => !file.fileSize || file.fileSize <= 4 * 1024 * 1024,
         'La foto de perfil no debe superar los 4MB'
       )
       .refine((file) => {
         const allowedTypes = ['image/png', 'image/jpg', 'image/jpeg']
-        return allowedTypes.includes(file.type)
+        return !file.mimeType || allowedTypes.includes(file.mimeType)
       }, 'La foto de perfil debe ser PNG o JPG')
       .optional(),
     alumnos: z
