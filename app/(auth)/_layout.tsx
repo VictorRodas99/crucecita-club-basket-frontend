@@ -1,7 +1,7 @@
 import LightBackground from '@/resources/components/light-background'
 import { useSession } from '@/resources/hooks/session'
 import { Redirect, Slot } from 'expo-router'
-import { Image, Text, View } from 'react-native'
+import { Image, ScrollView, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const mainLogo = require('@/resources/assets/images/main-logo.png')
@@ -14,8 +14,8 @@ export default function AuthLayout() {
   }
 
   return (
-    <View className="flex-1 bg-primary/20 dark:bg-secondary">
-      <SafeAreaView className="flex-1">
+    <ScrollView className="flex-1 bg-primary/20 dark:bg-secondary">
+      <SafeAreaView className="flex-1 pb-5">
         <LightBackground />
         <View className="flex-1 px-5">
           <View className="items-center py-12 gap-2">
@@ -34,6 +34,6 @@ export default function AuthLayout() {
           <Slot />
         </View>
       </SafeAreaView>
-    </View>
+    </ScrollView>
   )
 }
