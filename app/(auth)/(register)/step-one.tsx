@@ -35,7 +35,6 @@ export default function StepOne({ onNext }: StepsProps) {
     const isValid = await form.trigger('rol')
 
     if (isValid) {
-      console.log({ valueOnSuccess: form.getValues('rol') })
       onNext()
     }
 
