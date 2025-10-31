@@ -8,6 +8,7 @@ import {
 } from '@/resources/components/card'
 import { InputDate } from '@/resources/components/date-input'
 import FormField from '@/resources/components/form-field'
+import GradientButton from '@/resources/components/gradient-button'
 import ImagePicker, {
   PickedImageAsset
 } from '@/resources/components/image-input'
@@ -15,12 +16,15 @@ import { Button } from '@/resources/components/primitives/button'
 import { Label } from '@/resources/components/primitives/label'
 import { Text } from '@/resources/components/primitives/text'
 import { cn } from '@/resources/lib/utils'
-import { LinearGradient } from 'expo-linear-gradient'
 import { ArrowRight, ChevronLeft } from 'lucide-react-native'
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { Pressable, useColorScheme, View } from 'react-native'
-import { RegisterFormData, StepsProps } from './register'
+import { useColorScheme, View } from 'react-native'
+import {
+  BUTTON_COLORS_GRADIENT,
+  RegisterFormData,
+  StepsProps
+} from './register'
 
 const fields = [
   'nombre',
@@ -163,30 +167,16 @@ export default function StepTwo({ onNext, onPrevious }: StepsProps) {
           </View>
         </CardContent>
         <CardFooter className="gap-3">
-          <Pressable
+          <GradientButton
             onPress={handleNext}
-            className="w-full opacity-100"
             disabled={isSubmitting}
+            colors={BUTTON_COLORS_GRADIENT}
           >
-            <LinearGradient
-              className="flex flex-row gap-2"
-              colors={['#10c8e0', '#0891b2']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={{
-                width: '100%',
-                paddingVertical: 8,
-                borderRadius: 8,
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              <Text className="text-white font-semibold">
-                Continuar con el Registro
-              </Text>
-              <ArrowRight color="white" size={18} />
-            </LinearGradient>
-          </Pressable>
+            <Text className="text-white font-semibold">
+              Continuar con el Registro
+            </Text>
+            <ArrowRight color="white" size={18} />
+          </GradientButton>
         </CardFooter>
       </Card>
     </View>
