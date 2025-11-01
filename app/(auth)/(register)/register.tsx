@@ -7,7 +7,7 @@ import { useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { LinearGradientProps } from 'expo-linear-gradient'
+import { StepsProps } from '@/resources/types/sections/register/props'
 import StepOne from './step-one'
 import StepTwo from './step-two'
 
@@ -28,16 +28,6 @@ const STEP = Object.freeze({
   studentsStep: 'students-step-if-parent',
   three: 'step-three'
 })
-
-export interface StepsProps {
-  onNext: () => void
-  onPrevious?: () => void
-}
-
-export const BUTTON_COLORS_GRADIENT = [
-  '#10c8e0',
-  '#0891b2'
-] as LinearGradientProps['colors']
 
 const components = {
   [STEP.one]: (props: StepsProps) => <StepOne {...props} />,

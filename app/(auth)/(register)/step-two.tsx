@@ -15,16 +15,14 @@ import ImagePicker, {
 import { Button } from '@/resources/components/primitives/button'
 import { Label } from '@/resources/components/primitives/label'
 import { Text } from '@/resources/components/primitives/text'
+import { BUTTON_COLORS_GRADIENT } from '@/resources/constants/sections/register/gradient-button'
 import { cn } from '@/resources/lib/utils'
+import { StepsProps } from '@/resources/types/sections/register/props'
 import { ArrowRight, ChevronLeft } from 'lucide-react-native'
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useColorScheme, View } from 'react-native'
-import {
-  BUTTON_COLORS_GRADIENT,
-  RegisterFormData,
-  StepsProps
-} from './register'
+import { RegisterFormData } from './register'
 
 const fields = [
   'nombre',

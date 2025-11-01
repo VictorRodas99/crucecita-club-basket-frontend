@@ -12,18 +12,16 @@ import { Label } from '@/resources/components/primitives/label'
 import { Text } from '@/resources/components/primitives/text'
 import { Select } from '@/resources/components/select'
 import { USER_ROLE } from '@/resources/constants/config'
+import { BUTTON_COLORS_GRADIENT } from '@/resources/constants/sections/register/gradient-button'
 import { capitalize, cn } from '@/resources/lib/utils'
+import { StepsProps } from '@/resources/types/sections/register/props'
 import { Option } from '@rn-primitives/select'
 import { router } from 'expo-router'
 import { ArrowRight } from 'lucide-react-native'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { View } from 'react-native'
-import {
-  BUTTON_COLORS_GRADIENT,
-  RegisterFormData,
-  StepsProps
-} from './register'
+import { RegisterFormData } from './register'
 
 const rols = Object.values(USER_ROLE).map((value) => ({
   label: capitalize(value),
