@@ -1,5 +1,6 @@
 import type { LucideIcon, LucideProps } from 'lucide-react-native'
 import { cssInterop } from 'nativewind'
+import { useColorScheme } from 'react-native'
 import { cn } from '../lib/utils'
 
 type IconProps = LucideProps & {
@@ -46,11 +47,14 @@ function Icon({
   size = 14,
   ...props
 }: IconProps) {
+  const colorScheme = useColorScheme()
+
   return (
     <IconImpl
       as={IconComponent}
       className={cn('text-foreground', className)}
       size={size}
+      color={colorScheme === 'dark' ? 'white' : 'black'}
       {...props}
     />
   )
