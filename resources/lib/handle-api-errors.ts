@@ -2,16 +2,16 @@
 // https://www.luckymedia.dev/about/lokman-musliu
 
 import type { FieldValues, Path, UseFormSetError } from 'react-hook-form'
-import type { ToastProps } from '../components/toast'
+import { toast as primititveToast } from 'sonner-native'
 
 export async function handleApiErrors<T extends FieldValues>({
   error,
   setError,
-  showToast
+  toast
 }: {
   error: any
   setError: UseFormSetError<T>
-  showToast: (props: ToastProps) => void
+  toast: typeof primititveToast
 }): Promise<void> {
   if (error?.name === 'HTTPError' && error.response.status === 422) {
     const errors = await (error as any).response.json()
@@ -29,9 +29,6 @@ export async function handleApiErrors<T extends FieldValues>({
     })
   } else {
     // console.log(JSON.stringify(error, null, 2));
-    showToast({
-      type: 'error',
-      message: 'Algo salió mal'
-    })
+    toast.error('Algo salió mal')
   }
 }
