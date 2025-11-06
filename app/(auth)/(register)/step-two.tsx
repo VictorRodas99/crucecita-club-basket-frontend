@@ -9,19 +9,19 @@ import {
 import { InputDate } from '@/resources/components/date-input'
 import FormField from '@/resources/components/form-field'
 import GradientButton from '@/resources/components/gradient-button'
-import ImagePicker, {
-  PickedImageAsset
-} from '@/resources/components/image-input'
+import { Icon } from '@/resources/components/icon'
+import ImagePicker from '@/resources/components/image-input'
 import { Button } from '@/resources/components/primitives/button'
 import { Label } from '@/resources/components/primitives/label'
 import { Text } from '@/resources/components/primitives/text'
 import { BUTTON_COLORS_GRADIENT } from '@/resources/constants/sections/register/gradient-button'
+import { PickedImageAsset } from '@/resources/forms/image.zod'
 import { cn } from '@/resources/lib/utils'
 import { StepsProps } from '@/resources/types/sections/register/props'
 import { ArrowRight, ChevronLeft } from 'lucide-react-native'
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { useColorScheme, View } from 'react-native'
+import { View } from 'react-native'
 import { RegisterFormData } from './register'
 
 const fields = [
@@ -35,8 +35,6 @@ const fields = [
 ] as const
 
 export default function StepTwo({ onNext, onPrevious }: StepsProps) {
-  const colorScheme = useColorScheme()
-
   const form = useFormContext<RegisterFormData>()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -65,10 +63,7 @@ export default function StepTwo({ onNext, onPrevious }: StepsProps) {
         {onPrevious && (
           <View className="absolute top-1 left-0">
             <Button variant="link" onPress={onPrevious}>
-              <ChevronLeft
-                size={18}
-                color={colorScheme === 'dark' ? 'white' : 'black'}
-              />
+              <Icon as={ChevronLeft} size={18} />
             </Button>
           </View>
         )}
@@ -97,6 +92,8 @@ export default function StepTwo({ onNext, onPrevious }: StepsProps) {
                     <ImagePicker
                       value={value as PickedImageAsset}
                       onChange={onChange}
+                      className="size-20 rounded-full"
+                      iconColor="white"
                     />
                     {error && (
                       <Text className="text-xs font-bold leading-none text-red-500 mt-1">
@@ -148,7 +145,7 @@ export default function StepTwo({ onNext, onPrevious }: StepsProps) {
                   <View className={cn('flex flex-col', { 'gap-1': error })}>
                     <InputDate
                       onBlur={onBlur}
-                      onChangeText={onChange}
+                      onChangeDate={onChange}
                       value={!value ? '' : (value as string)}
                       includePicker
                     />
