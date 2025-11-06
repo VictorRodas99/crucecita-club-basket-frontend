@@ -3,13 +3,17 @@ import { USER_ROLE } from '@/resources/constants/config'
 import registerFormSchema from '@/resources/forms/auth/register.zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as Device from 'expo-device'
-import { useMemo, useState } from 'react'
+import { lazy, Suspense, useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { Button } from '@/resources/components/primitives/button'
 import { StepsProps } from '@/resources/types/sections/register/props'
+import { ActivityIndicator, View } from 'react-native'
 import StepOne from './step-one'
 import StepTwo from './step-two'
+
+const StudentsRegistrationStep = lazy(() => import('./students-step'))
 
 /* <Button variant="link" onPress={() => router.push('/login')}>
           <Text>Login</Text>
@@ -32,8 +36,27 @@ const STEP = Object.freeze({
 const components = {
   [STEP.one]: (props: StepsProps) => <StepOne {...props} />,
   [STEP.two]: (props: StepsProps) => <StepTwo {...props} />,
-  [STEP.studentsStep]: (props: StepsProps) => <Text>Hola</Text>,
-  [STEP.three]: (props: StepsProps) => <Text>Paso tres</Text>
+  [STEP.studentsStep]: (props: StepsProps) => (
+    <Suspense
+      fallback={
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <ActivityIndicator size="large" color="white" />
+        </View>
+      }
+    >
+      <StudentsRegistrationStep {...props} />
+    </Suspense>
+  ),
+  [STEP.three]: (props: StepsProps) => (
+    <View className="gap-5">
+      <Button onPress={() => props?.onPrevious && props.onPrevious()}>
+        <Text>Volver</Text>
+      </Button>
+      <Text>Paso tres</Text>
+    </View>
+  )
 }
 
 export type FlowStep = (typeof STEP)[keyof typeof STEP]
@@ -53,7 +76,8 @@ export default function Register() {
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
-      device_name: Device.deviceName ?? 'web'
+      device_name: Device.deviceName ?? 'web',
+      alumnos: []
     },
     mode: 'onChange'
   })
