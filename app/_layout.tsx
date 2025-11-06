@@ -1,6 +1,4 @@
-import { ToastContainer } from '@/resources/components/toast'
 import { SessionProvider } from '@/resources/context/session.context'
-import { ToastProvider } from '@/resources/context/toast.context'
 import '@/resources/css/global.css'
 import {
   Inter_400Regular,
@@ -13,6 +11,9 @@ import { PortalHost } from '@rn-primitives/portal'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Slot, SplashScreen } from 'expo-router'
 import { useEffect } from 'react'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { KeyboardProvider } from 'react-native-keyboard-controller'
+import { Toaster } from 'sonner-native'
 
 SplashScreen.preventAutoHideAsync()
 const queryClient = new QueryClient()
@@ -36,14 +37,16 @@ export default function RootLayout() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <SessionProvider>
-        <ToastProvider>
-          <ToastContainer />
-          <Slot />
-          <PortalHost />
-        </ToastProvider>
-      </SessionProvider>
-    </QueryClientProvider>
+    <GestureHandlerRootView>
+      <QueryClientProvider client={queryClient}>
+        <SessionProvider>
+          <KeyboardProvider>
+            <Slot />
+            <Toaster />
+            <PortalHost />
+          </KeyboardProvider>
+        </SessionProvider>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   )
 }
