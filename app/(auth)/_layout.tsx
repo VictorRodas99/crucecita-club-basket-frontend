@@ -2,7 +2,9 @@ import LightBackground from '@/resources/components/light-background'
 import { useSession } from '@/resources/hooks/session'
 import { Redirect, Slot } from 'expo-router'
 import { Image, ScrollView, Text, View } from 'react-native'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { Toaster } from 'sonner-native'
 
 const mainLogo = require('@/resources/assets/images/main-logo.png')
 
@@ -31,9 +33,12 @@ export default function AuthLayout() {
               </Text>
             </View>
           </View>
-          <Slot />
+          <KeyboardAwareScrollView>
+            <Slot />
+          </KeyboardAwareScrollView>
         </View>
       </SafeAreaView>
+      <Toaster />
     </ScrollView>
   )
 }
