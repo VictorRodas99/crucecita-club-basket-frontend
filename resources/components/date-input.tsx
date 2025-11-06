@@ -7,14 +7,9 @@ import DateTimePicker, {
 import { ClassValue } from 'clsx'
 import { CalendarPlus } from 'lucide-react-native'
 import { PropsWithChildren, useState } from 'react'
-import {
-  Pressable,
-  TextInput,
-  TextInputProps,
-  useColorScheme,
-  View
-} from 'react-native'
+import { Pressable, TextInput, TextInputProps, View } from 'react-native'
 import { cn, parseDate } from '../lib/utils'
+import { Icon } from './icon'
 import { DEFAULT_INPUT_STYLES, Input } from './primitives/input'
 import { Text } from './primitives/text'
 
@@ -72,19 +67,21 @@ export default function DatePicker({
   )
 }
 
-type InputProps = TextInputProps & React.RefAttributes<TextInput>
+type InputProps = Omit<
+  TextInputProps & React.RefAttributes<TextInput>,
+  'onChangeText'
+> & { onChangeDate: (formattedDate: string) => void }
 
 export function InputDate({
   value: externalValue,
-  onChangeText,
+  onChangeDate,
   includePicker = false,
   ...props
 }: InputProps & { includePicker?: boolean }) {
   const [internalValue, setInternalValue] = useState('')
-  const colorScheme = useColorScheme()
 
   const value = externalValue ?? internalValue
-  const setValue = externalValue !== undefined ? onChangeText : setInternalValue
+  const setValue = externalValue !== undefined ? onChangeDate : setInternalValue
 
   const formatDate = (text: string): string => {
     const digits = text.replace(/\D/g, '').slice(0, 8)
@@ -120,10 +117,7 @@ export function InputDate({
             onChange={handlePickerChange}
             triggerClassName="shadow-none border-none"
           >
-            <CalendarPlus
-              size={18}
-              color={colorScheme === 'dark' ? 'white' : 'black'}
-            />
+            <Icon as={CalendarPlus} size={18} />
           </DatePicker>
         </View>
       )}
