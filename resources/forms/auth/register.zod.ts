@@ -4,13 +4,12 @@ import { Role } from '@/resources/types/user'
 import { z } from 'zod'
 import { commonDateSchema } from '../date.zod'
 import { fileSchema } from '../file.zod'
-import { imageSchema } from '../image.zod'
 
-const commonImageRules = imageSchema
+const commonImageRules = fileSchema
   .refine((file) => file.uri.length > 0, 'La foto de perfil es requerida')
 
   .refine(
-    (file) => !file.fileSize || file.fileSize <= 4 * 1024 * 1024,
+    (file) => !file.size || file.size <= 4 * 1024 * 1024,
     'La foto de perfil no debe superar los 4MB'
   )
   .refine((file) => {
