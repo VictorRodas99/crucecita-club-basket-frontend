@@ -1,18 +1,17 @@
-import {
-  getDocumentAsync,
-  type DocumentPickerAsset
-} from 'expo-document-picker'
+import { DocumentPickerOptions, getDocumentAsync } from 'expo-document-picker'
 import { Pressable, TextInput, TextInputProps, View } from 'react-native'
+import { createReactNativeFile } from '../lib/files'
 import { cn } from '../lib/utils'
+import { RNFile } from '../types/file'
 import { Text } from './primitives/text'
 
 type InputProps = TextInputProps & React.RefAttributes<TextInput>
 type FileInputProps = Omit<Omit<InputProps, 'onChange'>, 'value'> & {
-  value?: DocumentPickerAsset
-  onChange?: (document: DocumentPickerAsset | null) => void
-  render?: (document: DocumentPickerAsset | null) => React.JSX.Element
+  value?: RNFile
+  onChange?: (document: RNFile | null) => void
+  render?: (document: RNFile | null) => React.JSX.Element
   errorMessage?: string
-}
+} & DocumentPickerOptions
 
 export default function FileInput({
   value,
@@ -20,11 +19,13 @@ export default function FileInput({
   onChange,
   placeholder,
   render,
-  errorMessage
+  errorMessage,
+  ...pickerOptions
 }: FileInputProps) {
   const pickFile = async () => {
     const result = await getDocumentAsync({
-      type: 'application/pdf'
+      type: 'application/pdf',
+      ...pickerOptions
     })
 
     const { assets, canceled } = result
@@ -37,7 +38,16 @@ export default function FileInput({
       return
     }
 
-    onChange(assets[0])
+    const asset = assets[0]
+
+    onChange(
+      createReactNativeFile({
+        mimeType: asset.mimeType ?? 'text/plain',
+        uri: asset.uri,
+        name: asset.name,
+        size: asset.size
+      })
+    )
   }
 
   return (

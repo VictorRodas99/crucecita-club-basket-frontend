@@ -1,8 +1,9 @@
 import * as ImagePickerLibrary from 'expo-image-picker'
 import { Image as ImageIcon } from 'lucide-react-native'
-import { Image, Pressable, View } from 'react-native'
-import { PickedImageAsset } from '../forms/image.zod'
+import { Alert, Image, Pressable, View } from 'react-native'
+import { createReactNativeFile } from '../lib/files'
 import { cn } from '../lib/utils'
+import { RNFile } from '../types/file'
 import { Icon } from './icon'
 
 function DefaultImageFallack({
@@ -22,12 +23,12 @@ function DefaultImageFallack({
 }
 
 interface ImagePickerProps {
-  value?: PickedImageAsset | null
+  value?: RNFile | null
   onChange?: (image: ImagePickerProps['value']) => void
   className?: string
   iconSize?: number
   iconColor?: string
-  render?: (image: PickedImageAsset | null) => React.JSX.Element
+  render?: (image: RNFile | null) => React.JSX.Element
   allowsEditing?: boolean
 }
 
@@ -39,6 +40,16 @@ export default function ImagePicker({
   ...props
 }: ImagePickerProps) {
   const pickImage = async () => {
+    const { status } = await ImagePickerLibrary.requestCameraPermissionsAsync()
+
+    if (status !== 'granted') {
+      Alert.alert(
+        'Permisos Requeridos',
+        'Lo siento, necesitamos los permisos necesarios para seleccionar imágenes.'
+      )
+      return
+    }
+
     let result = await ImagePickerLibrary.launchImageLibraryAsync({
       allowsEditing,
       aspect: [1, 1],
@@ -48,14 +59,14 @@ export default function ImagePicker({
     if (!result.canceled && result.assets[0]) {
       const asset = result.assets[0]
 
-      onChange?.({
-        uri: asset.uri,
-        fileName: asset.fileName,
-        fileSize: asset.fileSize,
-        mimeType: asset.mimeType,
-        width: asset.width,
-        height: asset.height
-      })
+      onChange?.(
+        createReactNativeFile({
+          mimeType: asset.mimeType ?? 'text/plain',
+          name: asset.fileName,
+          uri: asset.uri,
+          size: asset.fileSize
+        })
+      )
     }
   }
 
@@ -79,7 +90,7 @@ function ResultingImage({
   iconSize,
   iconColor
 }: {
-  image: PickedImageAsset | null
+  image: RNFile | null
   render?: ImagePickerProps['render']
   iconColor?: ImagePickerProps['iconColor']
   iconSize?: ImagePickerProps['iconSize']
