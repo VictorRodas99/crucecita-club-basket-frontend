@@ -4,8 +4,7 @@ import ky from 'ky'
 const http = ky.create({
   prefixUrl: API_URL,
   headers: {
-    Accept: 'application/json',
-    'Content-Type': 'application/json'
+    Accept: 'application/json'
   }
 })
 
