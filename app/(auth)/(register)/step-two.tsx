@@ -15,14 +15,14 @@ import { Button } from '@/resources/components/primitives/button'
 import { Label } from '@/resources/components/primitives/label'
 import { Text } from '@/resources/components/primitives/text'
 import { BUTTON_COLORS_GRADIENT } from '@/resources/constants/sections/register/gradient-button'
-import { PickedImageAsset } from '@/resources/forms/image.zod'
 import { cn } from '@/resources/lib/utils'
+import { RNFile } from '@/resources/types/file'
+import { RegisterFormData } from '@/resources/types/forms/auth'
 import { StepsProps } from '@/resources/types/sections/register/props'
 import { ArrowRight, ChevronLeft } from 'lucide-react-native'
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { View } from 'react-native'
-import { RegisterFormData } from './register'
 
 const fields = [
   'nombre',
@@ -50,7 +50,7 @@ export default function StepTwo({ onNext, onPrevious }: StepsProps) {
     const awaitedResults = await Promise.all(results)
 
     if (awaitedResults.every((result) => result)) {
-      console.log(form.getValues())
+      // console.log(form.getValues())
       onNext()
     }
 
@@ -90,7 +90,7 @@ export default function StepTwo({ onNext, onPrevious }: StepsProps) {
                 }) => (
                   <View className={cn('flex flex-col', { 'gap-1': error })}>
                     <ImagePicker
-                      value={value as PickedImageAsset}
+                      value={value as RNFile}
                       onChange={onChange}
                       className="size-20 rounded-full"
                       iconColor="white"
@@ -167,7 +167,7 @@ export default function StepTwo({ onNext, onPrevious }: StepsProps) {
             disabled={isSubmitting}
             colors={BUTTON_COLORS_GRADIENT}
           >
-            <Text className="text-white font-semibold">
+            <Text className="text-white font-semibold text-sm">
               Continuar con el Registro
             </Text>
             <ArrowRight color="white" size={18} />
