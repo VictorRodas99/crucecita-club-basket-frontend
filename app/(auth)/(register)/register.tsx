@@ -1,16 +1,15 @@
-import { Text } from '@/resources/components/primitives/text'
 import { USER_ROLE } from '@/resources/constants/config'
 import registerFormSchema from '@/resources/forms/auth/register.zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as Device from 'expo-device'
 import { lazy, Suspense, useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { z } from 'zod'
 
-import { Button } from '@/resources/components/primitives/button'
+import { RegisterFormData } from '@/resources/types/forms/auth'
 import { StepsProps } from '@/resources/types/sections/register/props'
 import { ActivityIndicator, View } from 'react-native'
 import StepOne from './step-one'
+import StepThree from './step-three'
 import StepTwo from './step-two'
 
 const StudentsRegistrationStep = lazy(() => import('./students-step'))
@@ -49,18 +48,10 @@ const components = {
       <StudentsRegistrationStep {...props} />
     </Suspense>
   ),
-  [STEP.three]: (props: StepsProps) => (
-    <View className="gap-5">
-      <Button onPress={() => props?.onPrevious && props.onPrevious()}>
-        <Text>Volver</Text>
-      </Button>
-      <Text>Paso tres</Text>
-    </View>
-  )
+  [STEP.three]: (props: StepsProps) => <StepThree {...props} />
 }
 
 export type FlowStep = (typeof STEP)[keyof typeof STEP]
-export type RegisterFormData = z.infer<typeof registerFormSchema>
 
 /**
  * Registration Flow
