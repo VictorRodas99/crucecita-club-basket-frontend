@@ -22,6 +22,7 @@ import { USER_ROLE } from '@/resources/constants/config'
 import { BUTTON_COLORS_GRADIENT } from '@/resources/constants/sections/register/gradient-button'
 import { studentsSchema } from '@/resources/forms/auth/register.zod'
 import { cn, getYearsSince, parseDate } from '@/resources/lib/utils'
+import { RegisterFormData } from '@/resources/types/forms/auth'
 import { StepsProps } from '@/resources/types/sections/register/props'
 import {
   ArrowRight,
@@ -36,7 +37,6 @@ import { useFieldArray, useFormContext } from 'react-hook-form'
 import { View } from 'react-native'
 import { toast } from 'sonner-native'
 import { z } from 'zod'
-import { RegisterFormData } from './register'
 
 type ZodStudentSchema = z.infer<typeof studentsSchema>
 
@@ -183,7 +183,7 @@ export default function StudentsRegistrationStep({
               {fields.map((item, index) => (
                 <View
                   key={item.id}
-                  className="flex-row justify-between border border-gray-200 rounded-md px-3 py-1"
+                  className="flex-row justify-between items-center border border-gray-200 dark:border-gray-400 rounded-md px-3 py-1"
                 >
                   <View>
                     <Text className="text-sm font-semibold">
@@ -196,7 +196,7 @@ export default function StudentsRegistrationStep({
                   </View>
                   <Button variant="ghost" onPress={() => remove(index)}>
                     <Text>
-                      <X size={14} />
+                      <Icon as={X} size={14} />
                     </Text>
                   </Button>
                 </View>
@@ -346,7 +346,7 @@ export default function StudentsRegistrationStep({
                         <Text className="text-sm">
                           {!image?.uri
                             ? 'Subir Foto de Cédula (Frontal)'
-                            : (image?.fileName ?? `image.${image?.mimeType}`)}
+                            : (image?.name ?? `image.${image?.mimeType}`)}
                         </Text>
                       </View>
                     )}
@@ -385,7 +385,7 @@ export default function StudentsRegistrationStep({
                         <Text className="text-sm">
                           {!image?.uri
                             ? 'Subir Foto de Cédula (Dorsal)'
-                            : (image?.fileName ?? `image.${image?.mimeType}`)}
+                            : (image?.name ?? `image.${image?.mimeType}`)}
                         </Text>
                       </View>
                     )}
