@@ -1,7 +1,16 @@
 import { createContext, PropsWithChildren, useMemo } from 'react'
 import { useSecureStorageState } from '../hooks/use-secure-storage'
+import { Role } from '../types/user'
+
+export interface User {
+  nombre: string
+  apellido: string
+  email: string
+  rol: Role
+}
 
 export type Session = {
+  user: User
   accessToken: string
   forgotPasswordToken?: string
 }
