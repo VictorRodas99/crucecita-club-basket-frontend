@@ -20,3 +20,4 @@ export const commonDateSchema = z
 
     return parsedDate < today
   }, 'La fecha de nacimiento debe ser válida')
+  .transform((value) => value.replaceAll('/', '-'))
