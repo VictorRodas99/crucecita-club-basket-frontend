@@ -19,7 +19,9 @@ export function capitalize(string: string) {
 export const parseDate = (dateString: string): Date | null => {
   if (!dateString || dateString.length !== 10) return null
 
-  const [day, month, year] = dateString.split('/').map(Number)
+  const separator = dateString.includes('/') ? '/' : '-'
+
+  const [day, month, year] = dateString.split(separator).map(Number)
 
   if (!day || !month || !year) {
     return null
@@ -52,4 +54,12 @@ export const getYearsSince = (date: Date) => {
   }
 
   return years
+}
+
+export const isPlainObject = (data: unknown) => {
+  if (!data) {
+    return false
+  }
+
+  return Object.getPrototypeOf(data) === Object.prototype
 }
