@@ -24,17 +24,9 @@ export function useRegisterMutation() {
 }
 
 export async function logout({ token }: { token?: string }) {
-  try {
-    await http
-      .post('logout', {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      .json()
-
-    return true
-  } catch (error) {
-    console.error(error)
-
-    return false
-  }
+  await http
+    .post('logout', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    .json()
 }
