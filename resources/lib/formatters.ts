@@ -13,6 +13,10 @@ export async function toFormData<T extends Record<string, any>>(data: T) {
     key: string,
     value: any
   ) => {
+    if (value === undefined || value === 'undefined') {
+      return
+    }
+
     if (Array.isArray(value)) {
       await Promise.all(
         value.map((item, index) =>
