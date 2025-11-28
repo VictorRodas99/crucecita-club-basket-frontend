@@ -15,15 +15,16 @@ import { Label } from '@/resources/components/primitives/label'
 import { Text } from '@/resources/components/primitives/text'
 import { BUTTON_COLORS_GRADIENT } from '@/resources/constants/sections/register/gradient-button'
 import { useRegisterMutation } from '@/resources/features/auth/use-auth-mutations'
-import { useSession } from '@/resources/hooks/session'
 import { handleApiErrors } from '@/resources/lib/handle-api-errors'
 import { cn } from '@/resources/lib/utils'
 import { RegisterFormData } from '@/resources/types/forms/auth'
 import { StepsProps } from '@/resources/types/sections/register/props'
+import { usePathname, useRouter } from 'expo-router'
 import { ArrowRight, ChevronLeft } from 'lucide-react-native'
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { View } from 'react-native'
+import { toast } from 'sonner-native'
 
 /*
 {"alumnos": [{"apellido": "Uno", "estatura_cm": "120.4", "fecha_nacimiento": "12/02/2018", "ficha_medica": [Object], "foto_cedula_dorsal": [Object], "foto_cedula_frontal": [Object], "nombre": "Hijao", "observaciones": "", "peso_kg": "40.5"}, {"apellido": "Dos", "estatura_cm": "145.6", "fecha_nacimiento": "03/04/2012", "ficha_medica": [Object], "foto_cedula_dorsal": [Object], "foto_cedula_frontal": [Object], "nombre": "Hijo", "observaciones": "Algo que agregar", "peso_kg": "40.3"}], "apellido": "Name", "device_name": "sdk_gphone64_x86_64", "email": "somename@gmail.com", "fecha_nacimiento": "20/12/2002", "foto_perfil": undefined, "nombre": "Some", "password": "something", "password_confirmation": "something", "rol": {"label": "Tutor", "value": "tutor"}, "telefono": "0981818181"}
@@ -32,7 +33,8 @@ import { View } from 'react-native'
 export default function StepThree({ onPrevious }: StepsProps) {
   const form = useFormContext<RegisterFormData>()
   const userRegister = useRegisterMutation()
-  const { setSession } = useSession()
+  const router = useRouter()
+  const pathname = usePathname()
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -45,14 +47,20 @@ export default function StepThree({ onPrevious }: StepsProps) {
     userRegister.mutate(data, {
       onSuccess: (response) => {
         if (response.success) {
-          setSession({
-            accessToken: response.access_token,
-            user: response.data
+          toast.info('Cuenta Registrada con Éxito!', {
+            description:
+              'Deberá esperar la confirmación del administrador para poder iniciar sesión',
+            duration: 5_000
           })
+          router.navigate('/(auth)/login')
         }
       },
       onError: async (error) => {
-        await handleApiErrors({ error, setError: form.setError })
+        await handleApiErrors({
+          error,
+          setError: form.setError,
+          forceNotifications: pathname === '/register'
+        })
       },
       onSettled: () => {
         setIsSubmitting(false)
