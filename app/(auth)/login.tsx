@@ -6,50 +6,34 @@ import {
   CardHeader,
   CardTitle
 } from '@/resources/components/card'
+import PasswordInput from '@/resources/components/password-input'
 import { Button } from '@/resources/components/primitives/button'
 import { Input } from '@/resources/components/primitives/input'
 import { Label } from '@/resources/components/primitives/label'
 import { zodSpanishRulesMessages } from '@/resources/constants/rules'
+import { useLoginMutation } from '@/resources/features/auth/use-auth-mutations'
+import { useSession } from '@/resources/hooks/session'
+import { handleApiErrors } from '@/resources/lib/handle-api-errors'
 import { cn } from '@/resources/lib/utils'
+import { LoginForm } from '@/resources/types/forms/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as Device from 'expo-device'
 import { LinearGradient } from 'expo-linear-gradient'
 import { router } from 'expo-router'
-import { Eye, EyeClosed, LucideProps } from 'lucide-react-native'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { Pressable, Text, View, useColorScheme } from 'react-native'
+import { Pressable, Text, View } from 'react-native'
+import { toast } from 'sonner-native'
 import { z } from 'zod'
 
-const loginFormSchema = z.object({
+export const loginFormSchema = z.object({
   email: z.string().email({ message: 'Email Inválido' }),
   password: z.string().min(6, zodSpanishRulesMessages.passwordMin),
   device_name: z.string()
 })
 
-type LoginForm = z.infer<typeof loginFormSchema>
-
-const EyeIcon = ({
-  type,
-  ...props
-}: { type: 'opened' | 'closed' } & LucideProps) => {
-  if (type === 'opened') {
-    return <Eye {...props} />
-  }
-
-  if (type === 'closed') {
-    return <EyeClosed {...props} />
-  }
-
-  throw new Error(
-    `Invalid type, expected "opened" or "closed" but "${type}" was given`
-  )
-}
-
 export default function Login() {
-  const colorScheme = useColorScheme()
-  const [isPasswordInputSecured, setIsPasswordInputSecured] = useState(true)
-
+  const userLogin = useLoginMutation()
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
@@ -59,13 +43,30 @@ export default function Login() {
     }
   })
 
-  const {
-    formState: { errors },
-    handleSubmit
-  } = form
+  const { setSession } = useSession()
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const onSubmit = async (values: LoginForm) => {
-    console.log(values)
+  const { handleSubmit } = form
+
+  const onSubmit = async (data: LoginForm) => {
+    setIsSubmitting(true)
+
+    userLogin.mutate(data, {
+      onSuccess: (response) => {
+        if (response.success) {
+          setSession({
+            accessToken: response.access_token,
+            user: response.data
+          })
+        }
+      },
+      onError: async (error) => {
+        await handleApiErrors({ error, setError: form.setError })
+      },
+      onSettled: () => {
+        setIsSubmitting(false)
+      }
+    })
   }
 
   return (
@@ -86,7 +87,10 @@ export default function Login() {
               <Controller
                 name="email"
                 control={form.control}
-                render={({ field: { name, onChange, onBlur, value } }) => (
+                render={({
+                  field: { name, onChange, onBlur, value },
+                  formState: { errors }
+                }) => (
                   <View
                     className={cn('flex flex-col', { 'gap-1': errors[name] })}
                   >
@@ -112,32 +116,18 @@ export default function Login() {
               <Controller
                 name="password"
                 control={form.control}
-                render={({ field: { name, onChange, onBlur, value } }) => (
+                render={({
+                  field: { name, onChange, onBlur, value },
+                  formState: { errors }
+                }) => (
                   <View
                     className={cn('flex flex-col', { 'gap-1': errors[name] })}
                   >
-                    <View className="relative">
-                      <Input
-                        placeholder="*****"
-                        autoCapitalize="none"
-                        secureTextEntry={isPasswordInputSecured}
-                        onBlur={onBlur}
-                        onChangeText={onChange}
-                        value={value}
-                      />
-                      <View className="absolute top-2 right-3">
-                        <Pressable
-                          onPress={() =>
-                            setIsPasswordInputSecured((prev) => !prev)
-                          }
-                        >
-                          <EyeIcon
-                            type={isPasswordInputSecured ? 'opened' : 'closed'}
-                            color={colorScheme === 'dark' ? 'white' : 'black'}
-                          />
-                        </Pressable>
-                      </View>
-                    </View>
+                    <PasswordInput
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                    />
 
                     {errors[name] && (
                       <Text className="text-xs font-bold leading-none text-red-500 mt-1">
@@ -154,6 +144,7 @@ export default function Login() {
           <Pressable
             onPress={() => handleSubmit(onSubmit)()}
             className="w-full opacity-100"
+            disabled={isSubmitting}
           >
             <LinearGradient
               colors={['#10c8e0', '#0891b2']}
@@ -167,12 +158,15 @@ export default function Login() {
                 justifyContent: 'center'
               }}
             >
-              <Text className="text-white font-semibold">Iniciar Sesión</Text>
+              <Text className="text-white font-semibold">
+                {isSubmitting ? 'Iniciando Sesión...' : 'Iniciar Sesión'}
+              </Text>
             </LinearGradient>
           </Pressable>
           <Button
             variant="link"
-            onPress={() => router.push('/forgot-password')}
+            // onPress={() => router.push('/forgot-password')}
+            onPress={() => toast.warning('Apartado aún en desarrollo')}
           >
             <Text className="text-muted-foreground text-xs">
               ¿Olvidaste tu contraseña?
