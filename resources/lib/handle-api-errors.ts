@@ -7,10 +7,12 @@ import { ErrorResponse } from '../types/api-responses'
 
 export async function handleApiErrors<T extends FieldValues>({
   error,
-  setError
+  setError,
+  forceNotifications = false
 }: {
   error: any
   setError: UseFormSetError<T>
+  forceNotifications?: boolean
 }): Promise<void> {
   if (error?.name === 'HTTPError' && error.response?.status === 422) {
     const response = (await error.response.json()) as ErrorResponse
@@ -25,6 +27,10 @@ export async function handleApiErrors<T extends FieldValues>({
       const errorMessage = Array.isArray(errors[field])
         ? errors[field].join(' ')
         : errors[field]
+
+      if (forceNotifications) {
+        toast.error(`Error en el campo ${field}`, { description: errorMessage })
+      }
 
       setError(field as Path<T>, {
         type: 'manual',
